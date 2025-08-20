@@ -4,225 +4,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 Kütüphane Yönetim Sistemi</title>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-book-open me-2"></i>
-                Kütüphane Yönetim Sistemi
-            </a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span>Kütüphane Yönetim Sistemi</span>
+            </div>
+            <div class="header-info">
+                <span>
                     <i class="fas fa-clock me-1"></i>
                     <span id="current-time"></span>
                 </span>
+                <span>
+                    <i class="fas fa-user me-1"></i>
+                    Sistem Yöneticisi
+                </span>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
-                            <i class="fas fa-tools me-2"></i>
-                            İşlemler
-                        </h5>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Kitap Ekleme -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Yeni Kitap Ekle
+                </h3>
+                
+                <form id="addBookForm">
+                    <div class="form-group">
+                        <label for="bookTitle" class="form-label">Kitap Başlığı</label>
+                        <input type="text" class="form-input" id="bookTitle" required>
                     </div>
-                    <div class="card-body">
-                        <!-- Kitap Ekleme Formu -->
-                        <form id="addBookForm">
-                            <h6 class="text-primary mb-3">
-                                <i class="fas fa-plus-circle me-2"></i>
-                                Yeni Kitap Ekle
-                            </h6>
-                            
-                            <div class="mb-3">
-                                <label for="bookTitle" class="form-label">Kitap Başlığı</label>
-                                <input type="text" class="form-control" id="bookTitle" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="bookAuthor" class="form-label">Yazar</label>
-                                <input type="text" class="form-control" id="bookAuthor" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="bookIsbn" class="form-label">ISBN</label>
-                                <input type="text" class="form-control" id="bookIsbn" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-save me-2"></i>
-                                Kitap Ekle
-                            </button>
-                        </form>
-                        
-                        <hr class="my-4">
-                        
-                        <!-- Arama Formu -->
-                        <form id="searchForm">
-                            <h6 class="text-success mb-3">
-                                <i class="fas fa-search me-2"></i>
-                                Kitap Ara
-                            </h6>
-                            
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="searchKeyword" 
-                                       placeholder="Başlık, yazar veya ISBN...">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-search me-2"></i>
-                                Ara
-                            </button>
-                        </form>
-                        
-                        <hr class="my-4">
-                        
-                        <!-- İstatistikler -->
-                        <div id="statsSection">
-                            <h6 class="text-info mb-3">
-                                <i class="fas fa-chart-bar me-2"></i>
-                                İstatistikler
-                            </h6>
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <div class="stat-card bg-primary text-white">
-                                        <h4 id="totalBooks">0</h4>
-                                        <small>Toplam Kitap</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stat-card bg-success text-white">
-                                        <h4 id="fileStatus">✓</h4>
-                                        <small>Dosya Durumu</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    <div class="form-group">
+                        <label for="bookAuthor" class="form-label">Yazar</label>
+                        <input type="text" class="form-input" id="bookAuthor" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookIsbn" class="form-label">ISBN</label>
+                        <input type="text" class="form-input" id="bookIsbn" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Kitap Ekle
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="addBookByIsbn()">
+                        <i class="fas fa-search me-2"></i>
+                        ISBN ile Bul
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Arama -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-search me-2"></i>
+                    Kitap Ara
+                </h3>
+                
+                <form id="searchForm">
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="searchKeyword" 
+                               placeholder="Başlık, yazar veya ISBN...">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-search me-2"></i>
+                        Ara
+                    </button>
+                </form>
+            </div>
+            
+            <!-- İstatistikler -->
+            <div class="sidebar-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Sistem Durumu
+                </h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalBooks">0</div>
+                        <div class="stat-label">Toplam Kitap</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="fileStatus">✓</div>
+                        <div class="stat-label">Veri Durumu</div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Main Content Area -->
-            <div class="col-lg-9 col-md-8">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-dark">
-                        <i class="fas fa-books me-2"></i>
-                        Kitap Listesi
-                    </h2>
-                    <button class="btn btn-outline-primary" onclick="loadBooks()">
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Content Header -->
+            <div class="content-header">
+                <h1 class="content-title">
+                    <i class="fas fa-books"></i>
+                    Kitap Koleksiyonu
+                </h1>
+                <div class="header-actions">
+                    <button class="btn refresh-btn" onclick="loadBooks()">
                         <i class="fas fa-sync-alt me-2"></i>
                         Yenile
                     </button>
-                </div>
-                
-                <!-- Loading Spinner -->
-                <div id="loadingSpinner" class="text-center d-none">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Yükleniyor...</span>
-                    </div>
-                    <p class="mt-2">Kitaplar yükleniyor...</p>
-                </div>
-                
-                <!-- Books List -->
-                <div id="booksContainer">
-                    <div class="row" id="booksList">
-                        <!-- Kitaplar buraya dinamik olarak eklenecek -->
-                    </div>
-                </div>
-                
-                <!-- Empty State -->
-                <div id="emptyState" class="text-center d-none">
-                    <div class="empty-state">
-                        <i class="fas fa-books fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">Henüz kitap eklenmemiş</h4>
-                        <p class="text-muted">İlk kitabınızı eklemek için sol taraftaki formu kullanın.</p>
-                    </div>
-                </div>
-                
-                <!-- Search Results -->
-                <div id="searchResults" class="d-none">
-                    <div class="alert alert-info">
-                        <i class="fas fa-search me-2"></i>
-                        <strong id="searchCount">0</strong> sonuç bulundu
-                        <button class="btn btn-sm btn-outline-info ms-2" onclick="clearSearch()">
-                            <i class="fas fa-times me-1"></i>
-                            Aramayı Temizle
-                        </button>
-                    </div>
+                    <button class="btn btn-outline-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        Çıkış
+                    </button>
                 </div>
             </div>
-        </div>
+            
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading d-none">
+                <div class="spinner"></div>
+                <p>Kitaplar yükleniyor...</p>
+            </div>
+            
+            <!-- Search Results -->
+            <div id="searchResults" class="search-results d-none">
+                <div class="search-info">
+                    <i class="fas fa-search me-2"></i>
+                    <strong id="searchCount">0</strong> sonuç bulundu
+                </div>
+                <button class="clear-search" onclick="clearSearch()">
+                    <i class="fas fa-times me-1"></i>
+                    Aramayı Temizle
+                </button>
+            </div>
+            
+            <!-- Books Grid -->
+            <div id="booksContainer">
+                <div class="books-grid" id="booksList">
+                    <!-- Kitaplar buraya dinamik olarak eklenecek -->
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state d-none">
+                <i class="fas fa-books"></i>
+                <h3>Henüz kitap eklenmemiş</h3>
+                <p>İlk kitabınızı eklemek için sol taraftaki formu kullanın.</p>
+            </div>
+        </main>
     </div>
 
     <!-- Toast Container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast-container">
         <div id="toast" class="toast" role="alert">
-            <div class="toast-header">
-                <i class="fas fa-info-circle me-2"></i>
-                <strong class="me-auto" id="toastTitle">Bilgi</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body" id="toastMessage">
+            <div id="toastMessage">
                 <!-- Toast mesajı buraya gelecek -->
             </div>
         </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                        Kitap Silme Onayı
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Bu kitabı silmek istediğinizden emin misiniz?</p>
-                    <div class="alert alert-warning">
-                        <strong>Kitap:</strong> <span id="deleteBookTitle"></span><br>
-                        <strong>Yazar:</strong> <span id="deleteBookAuthor"></span><br>
+    <div id="deleteModal" class="modal d-none">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Kitap Silme Onayı
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Bu kitabı silmek istediğinizden emin misiniz?</p>
+                <div class="book-details">
+                    <div class="detail-item">
+                        <strong>Kitap:</strong> <span id="deleteBookTitle"></span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Yazar:</strong> <span id="deleteBookAuthor"></span>
+                    </div>
+                    <div class="detail-item">
                         <strong>ISBN:</strong> <span id="deleteBookIsbn"></span>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>
-                        İptal
-                    </button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">
-                        <i class="fas fa-trash me-2"></i>
-                        Sil
-                    </button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    İptal
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="fas fa-trash"></i>
+                    Sil
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

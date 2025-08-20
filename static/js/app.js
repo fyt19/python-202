@@ -92,41 +92,40 @@ function displayBooks(books) {
 
 // Create a book card element
 function createBookCard(book, index) {
-    const col = document.createElement('div');
-    col.className = 'col-lg-6 col-xl-4 mb-4';
+    const bookItem = document.createElement('div');
+    bookItem.className = 'book-item';
+    bookItem.setAttribute('data-isbn', book.isbn);
     
-    col.innerHTML = `
-        <div class="book-card fade-in" data-isbn="${book.isbn}">
-            <div class="d-flex align-items-start justify-content-between">
-                <div class="flex-grow-1">
-                    <h5 class="book-title">${escapeHtml(book.title)}</h5>
-                    <p class="book-author">
-                        <i class="fas fa-user me-2"></i>
-                        ${escapeHtml(book.author)}
-                    </p>
-                    <div class="book-isbn">
-                        <i class="fas fa-barcode me-2"></i>
-                        ${escapeHtml(book.isbn)}
-                    </div>
-                </div>
-                <div class="book-icon">
-                    <i class="fas fa-book"></i>
+    bookItem.innerHTML = `
+        <div class="book-header">
+            <div class="book-info">
+                <h3 class="book-title">${escapeHtml(book.title)}</h3>
+                <p class="book-author">
+                    <i class="fas fa-user"></i>
+                    ${escapeHtml(book.author)}
+                </p>
+                <div class="book-isbn">
+                    <i class="fas fa-barcode"></i>
+                    ${escapeHtml(book.isbn)}
                 </div>
             </div>
-            <div class="book-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editBook('${book.isbn}')" title="Düzenle">
-                    <i class="fas fa-edit"></i>
-                    Düzenle
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteBook('${book.isbn}', '${escapeHtml(book.title)}', '${escapeHtml(book.author)}')" title="Sil">
-                    <i class="fas fa-trash"></i>
-                    Sil
-                </button>
+            <div class="book-icon">
+                <i class="fas fa-book"></i>
             </div>
+        </div>
+        <div class="book-actions">
+            <button class="btn btn-sm btn-outline-primary" onclick="editBook('${book.isbn}')" title="Düzenle">
+                <i class="fas fa-edit"></i>
+                Düzenle
+            </button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteBook('${book.isbn}', '${escapeHtml(book.title)}', '${escapeHtml(book.author)}')" title="Sil">
+                <i class="fas fa-trash"></i>
+                Sil
+            </button>
         </div>
     `;
     
-    return col;
+    return bookItem;
 }
 
 // Handle add book form submission
@@ -266,11 +265,16 @@ function deleteBook(isbn, title, author) {
     document.getElementById('deleteBookAuthor').textContent = author;
     document.getElementById('deleteBookIsbn').textContent = isbn;
     
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteModal.show();
+    // Show modal
+    document.getElementById('deleteModal').classList.remove('d-none');
     
     // Store the ISBN for confirmation
     document.getElementById('confirmDelete').dataset.isbn = isbn;
+}
+
+// Close delete modal
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('d-none');
 }
 
 // Handle delete confirmation
@@ -289,7 +293,7 @@ async function handleConfirmDelete() {
         
         if (data.success) {
             showToast(data.message, 'success');
-            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            closeDeleteModal();
         } else {
             showToast(data.message, 'error');
         }
@@ -336,56 +340,24 @@ function showLoading(show) {
 // Show toast notification
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
-    const toastTitle = document.getElementById('toastTitle');
     const toastMessage = document.getElementById('toastMessage');
     
-    // Set icon and title based on type
-    let icon, title;
-    switch (type) {
-        case 'success':
-            icon = 'fas fa-check-circle';
-            title = 'Başarılı';
-            toast.classList.add('bg-success', 'text-white');
-            break;
-        case 'error':
-            icon = 'fas fa-exclamation-circle';
-            title = 'Hata';
-            toast.classList.add('bg-danger', 'text-white');
-            break;
-        case 'warning':
-            icon = 'fas fa-exclamation-triangle';
-            title = 'Uyarı';
-            toast.classList.add('bg-warning', 'text-dark');
-            break;
-        default:
-            icon = 'fas fa-info-circle';
-            title = 'Bilgi';
-            toast.classList.add('bg-info', 'text-white');
-    }
-    
-    toastTitle.innerHTML = `<i class="${icon} me-2"></i>${title}`;
+    // Set message
     toastMessage.textContent = message;
     
     // Remove previous type classes
-    toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white', 'text-dark');
+    toast.classList.remove('success', 'error', 'warning', 'info');
     
-    // Add new type classes
-    switch (type) {
-        case 'success':
-            toast.classList.add('bg-success', 'text-white');
-            break;
-        case 'error':
-            toast.classList.add('bg-danger', 'text-white');
-            break;
-        case 'warning':
-            toast.classList.add('bg-warning', 'text-dark');
-            break;
-        default:
-            toast.classList.add('bg-info', 'text-white');
-    }
+    // Add new type class
+    toast.classList.add(type);
     
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
+    // Show toast
+    toast.style.display = 'block';
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
 }
 
 // Update current time
@@ -477,9 +449,123 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Edit book function (placeholder for future implementation)
+// Edit book function
 function editBook(isbn) {
-    showToast('Düzenleme özelliği yakında eklenecek!', 'info');
+    // Find the book
+    const book = currentBooks.find(b => b.isbn === isbn);
+    if (!book) {
+        showToast('Kitap bulunamadı!', 'error');
+        return;
+    }
+    
+    // Show edit modal
+    showEditModal(book);
+}
+
+// Show edit modal
+function showEditModal(book) {
+    // Create modal HTML
+    const modalHTML = `
+        <div id="editModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <i class="fas fa-edit"></i>
+                        Kitap Düzenle
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <form id="editBookForm">
+                        <div class="form-group">
+                            <label for="editBookTitle" class="form-label">Kitap Başlığı</label>
+                            <input type="text" class="form-input" id="editBookTitle" value="${escapeHtml(book.title)}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editBookAuthor" class="form-label">Yazar</label>
+                            <input type="text" class="form-input" id="editBookAuthor" value="${escapeHtml(book.author)}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editBookIsbn" class="form-label">ISBN</label>
+                            <input type="text" class="form-input" id="editBookIsbn" value="${escapeHtml(book.isbn)}" readonly>
+                            <small class="form-text">ISBN değiştirilemez</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                        <i class="fas fa-times"></i>
+                        İptal
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveBookEdit()">
+                        <i class="fas fa-save"></i>
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    document.getElementById('editModal').classList.remove('d-none');
+}
+
+// Close edit modal
+function closeEditModal() {
+    const modal = document.getElementById('editModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Save book edit
+async function saveBookEdit() {
+    const title = document.getElementById('editBookTitle').value.trim();
+    const author = document.getElementById('editBookAuthor').value.trim();
+    const isbn = document.getElementById('editBookIsbn').value.trim();
+    
+    if (!title || !author) {
+        showToast('Lütfen tüm alanları doldurun!', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/books/${isbn}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, author })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Kitap başarıyla güncellendi!', 'success');
+            closeEditModal();
+            loadBooks(); // Refresh the list
+        } else {
+            showToast(data.message || 'Güncelleme başarısız!', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating book:', error);
+        showToast('Güncelleme sırasında hata oluştu!', 'error');
+    }
+}
+
+// Logout function
+function logout() {
+    // Clear all storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Redirect to login
+    window.location.href = '/';
 }
 
 // Export functions for global access
@@ -487,4 +573,8 @@ window.loadBooks = loadBooks;
 window.clearSearch = clearSearch;
 window.deleteBook = deleteBook;
 window.editBook = editBook;
+window.closeDeleteModal = closeDeleteModal;
+window.closeEditModal = closeEditModal;
+window.saveBookEdit = saveBookEdit;
+window.logout = logout;
 

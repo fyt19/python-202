@@ -24,7 +24,12 @@ library = Library()
 
 @app.route('/')
 def index():
-    """Ana sayfa"""
+    """Ana sayfa - Login kontrolü"""
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    """Dashboard sayfası"""
     return render_template('index.html')
 
 @app.route('/api/books', methods=['GET'])
@@ -68,6 +73,78 @@ def add_book():
                 'message': 'Bu ISBN zaten kütüphanede mevcut!'
             }), 400
             
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Hata oluştu: {str(e)}'
+        }), 500
+
+@app.route('/api/books/isbn', methods=['POST'])
+def add_book_by_isbn():
+    """ISBN ile Open Library API'den kitap bilgilerini çeker ve ekler"""
+    try:
+        data = request.get_json()
+        isbn = data.get('isbn', '').strip()
+        
+        if not isbn:
+            return jsonify({
+                'success': False,
+                'message': 'ISBN alanı zorunludur!'
+            }), 400
+        
+        # ISBN ile kitap ekle
+        if library.add_book_by_isbn(isbn):
+            return jsonify({
+                'success': True,
+                'message': 'Kitap başarıyla eklendi!'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Kitap eklenemedi!'
+            }), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Hata oluştu: {str(e)}'
+        }), 500
+
+@app.route('/api/books/<isbn>', methods=['PUT'])
+def update_book(isbn):
+    """ISBN ile kitap günceller"""
+    try:
+        data = request.get_json()
+        title = data.get('title', '').strip()
+        author = data.get('author', '').strip()
+        
+        if not title or not author:
+            return jsonify({
+                'success': False,
+                'message': 'Başlık ve yazar alanları zorunludur!'
+            }), 400
+        
+        # Kitabı bul ve güncelle
+        book = library.find_book(isbn)
+        if not book:
+            return jsonify({
+                'success': False,
+                'message': 'Kitap bulunamadı!'
+            }), 404
+        
+        # Kitabı güncelle
+        book.title = title
+        book.author = author
+        
+        # Kütüphaneyi kaydet
+        library.save_books()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Kitap başarıyla güncellendi!',
+            'book': book.to_dict()
+        })
+        
     except Exception as e:
         return jsonify({
             'success': False,

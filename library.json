@@ -1,7 +1,12 @@
 [
   {
-    "title": "Test Kitabı",
-    "author": "Test Yazarı",
+    "title": "Test Kitap Güncellendi",
+    "author": "Test Yazar Güncellendi",
     "isbn": "123-456-789"
+  },
+  {
+    "title": "Harry Potter ve Felsefe Taşı",
+    "author": "J.K. Rowling",
+    "isbn": "978-0-7475-3269-9"
   }
 ]

@@ -14,3 +14,7 @@ pydantic>=2.0.0
 # Web arayüzü için (Flask)
 flask>=2.3.0
 flask-socketio>=5.3.0
+httpx>=0.24.0
+pytest>=7.0.0
+fastapi>=0.100.0
+uvicorn>=0.20.0

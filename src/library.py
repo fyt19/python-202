@@ -37,6 +37,41 @@ class Library:
         print(f"Kitap başarıyla eklendi: {book}")
         return True
     
+    def add_book_by_isbn(self, isbn: str) -> bool:
+        """
+        ISBN ile Open Library API'den kitap bilgilerini çeker ve ekler
+        
+        Args:
+            isbn (str): Kitap ISBN numarası
+            
+        Returns:
+            bool: Ekleme başarılı ise True
+        """
+        try:
+            # LibraryAPI import'u
+            from library_api import LibraryAPI
+            
+            # API'den kitap bilgilerini çek
+            api = LibraryAPI()
+            
+            # Senkron çağrı için asyncio kullan
+            import asyncio
+            book = asyncio.run(api.get_book_by_isbn(isbn))
+            
+            if book:
+                # Kitabı kütüphaneye ekle
+                return self.add_book(book)
+            else:
+                print(f"❌ ISBN {isbn} ile kitap bulunamadı!")
+                return False
+                
+        except ImportError:
+            print("❌ LibraryAPI modülü bulunamadı! httpx kurulu mu?")
+            return False
+        except Exception as e:
+            print(f"❌ API hatası: {e}")
+            return False
+    
     def remove_book(self, isbn: str) -> bool:
         """
         ISBN numarasına göre kitabı kütüphaneden siler

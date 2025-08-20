@@ -12,7 +12,7 @@ import time
 
 def check_dependencies():
     """Gerekli paketlerin yüklü olup olmadığını kontrol eder"""
-    required_packages = ['flask', 'flask_socketio']
+    required_packages = ['flask']
     missing_packages = []
     
     for package in required_packages:
@@ -34,7 +34,7 @@ def check_dependencies():
 def check_files():
     """Gerekli dosyaların var olup olmadığını kontrol eder"""
     required_files = [
-        'web_interface.py',
+        'simple_web.py',
         'templates/index.html',
         'static/css/style.css',
         'static/js/app.js',
@@ -72,20 +72,20 @@ def main():
     
     print("✅ Tüm kontroller başarılı!")
     print("\n🚀 Web arayüzü başlatılıyor...")
-    print("📱 Tarayıcınızda http://localhost:5000 adresini açın")
+    print("📱 Tarayıcınızda http://localhost:5001 adresini açın")
     print("⏹️  Durdurmak için Ctrl+C tuşlayın")
     print("-" * 50)
     
     # 3 saniye bekle ve tarayıcıyı aç
     time.sleep(3)
     try:
-        webbrowser.open('http://localhost:5000')
+        webbrowser.open('http://localhost:5001')
     except:
-        print("⚠️  Tarayıcı otomatik açılamadı. Manuel olarak http://localhost:5000 adresini açın.")
+        print("⚠️  Tarayıcı otomatik açılamadı. Manuel olarak http://localhost:5001 adresini açın.")
     
     # Web arayüzünü başlat
     try:
-        subprocess.run([sys.executable, 'web_interface.py'])
+        subprocess.run([sys.executable, 'simple_web.py'])
     except KeyboardInterrupt:
         print("\n\n👋 Web arayüzü kapatıldı.")
     except Exception as e:
